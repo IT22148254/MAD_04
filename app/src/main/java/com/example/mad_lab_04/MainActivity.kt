@@ -1,15 +1,14 @@
 package com.example.mad_lab_04
-
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.view.MenuItem
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.mad_lab_04.R
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -25,20 +24,34 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
         val menuIcon = findViewById<ImageView>(R.id.img_nav)
         menuIcon.setOnClickListener {
-            if (drawerLayout.isDrawerOpen(findViewById(R.id.nav_view))) {
-                drawerLayout.closeDrawer(findViewById(R.id.nav_view))
+            if (drawerLayout.isDrawerOpen(navigationView)) {
+                drawerLayout.closeDrawer(navigationView)
             } else {
-                drawerLayout.openDrawer(findViewById(R.id.nav_view))
+                drawerLayout.openDrawer(navigationView)
             }
         }
     }
 
-    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_settings -> {
+                val intent = Intent(this, FormLayout::class.java)
+                startActivity(intent)
+            }
+            // Add more cases for other menu items if needed
+        }
+        return true
     }
 }
