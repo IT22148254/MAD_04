@@ -1,12 +1,19 @@
 package com.example.mad_lab_04
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
+import android.util.Log
+import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -35,6 +42,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 drawerLayout.openDrawer(navigationView)
             }
         }
+
+        lateinit var tasks: List<Task>
+
+        GlobalScope.launch(Dispatchers.IO) {
+            tasks = MyApp.database.taskDao().getAllTasks()
+
+            withContext(Dispatchers.Main) {
+                val listViewTasks: ListView = findViewById(R.id.listViewTasks)
+                Log.d("Tasks", tasks.toString())
+                val adapter = TaskListAdapter(this@MainActivity, tasks)
+                listViewTasks.adapter = adapter
+            }
+        }
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
